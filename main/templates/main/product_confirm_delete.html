@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Удалить товар - Кофейня{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">Вы уверены, что хотите удалить этот товар?</h4>
+            <p><strong>{{ product.name }}</strong> (ID: {{ product.id }})</p>
+            <p>Это действие необратимо.</p>
+            <hr>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Удалить</button>
+                <a href="{% url 'product_detail' product.id %}" class="btn btn-secondary ms-2">Отмена</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
