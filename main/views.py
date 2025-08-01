@@ -8,46 +8,46 @@ from django.contrib import messages
 from django.db.models import Q # Для поиска
 
 def home_page(request):
-    # 1. Популярные товары (наиболее часто заказываемые, агрегатная функция SUM)
-    # Предполагаем, что популярность определяется по общему количеству проданных единиц
+    # Основные данные для главной страницы
+    featured_products = Product.objects.filter(is_available=True)[:4]
+    categories = Category.objects.all()
+
+    # Сохраняем вашу бизнес-логику (но оптимизируем запросы)
     popular_products = Product.objects.annotate(
         total_ordered_quantity=Sum('orderitem__quantity')
-    ).exclude(total_ordered_quantity__isnull=True).order_by('-total_ordered_quantity')[:5]
+    ).filter(
+        is_available=True,
+        total_ordered_quantity__isnull=False
+    ).order_by('-total_ordered_quantity')[:5]
 
+    new_products = Product.objects.filter(
+        is_available=True
+    ).order_by('-created_at')[:5]
 
-    # 2. Новинки (самые новые товары)
-    new_products = Product.objects.order_by('-created_at')[:5]
+    discount_products = Product.objects.filter(
+        is_available=True,
+        price__lt=5.00
+    ).order_by('-created_at')[:5]
 
-    # 3. Товары со скидкой (предположим, что у нас есть товары, где цена ниже определенной)
-    # Или, если у нас нет поля для скидки, можно показать товары, которые имеют "специальную" категорию или статус
-    # Для примера, покажем продукты с ценой ниже 5.00
-    # Или можно добавить новое поле 'is_on_sale' в модель Product
-    discount_products = Product.objects.filter(price__lt=5.00).order_by('-created_at')[:5]
-
-
-    # Пример сложной бизнес-логики:
-    # Определение самых активных покупателей (кто сделал больше всего заказов)
     top_customers = Customer.objects.annotate(
         order_count=Count('orders')
     ).order_by('-order_count')[:3]
 
-    # Пример QuerySet-ов
-    all_products = Product.objects.all() # all()
-    available_products = Product.objects.filter(is_available=True) # filter()
-    unavailable_products = Product.objects.exclude(is_available=True) # exclude()
-    products_sorted_by_price = Product.objects.order_by('price') # order_by()
-    distinct_categories = Category.objects.distinct() # distinct()
-    single_product = Product.objects.get(id=1) if Product.objects.filter(id=1).exists() else None # get()
-
     context = {
+        # Новые данные для шаблона
+        'featured_products': featured_products,
+        'categories': categories,
+
+        # Сохраняем ваши оригинальные данные
         'popular_products': popular_products,
         'new_products': new_products,
         'discount_products': discount_products,
         'top_customers': top_customers,
-        'all_products_count': all_products.count(), # Пример использования COUNT
-        'available_products_count': available_products.count(), # Пример использования COUNT
+        'all_products_count': Product.objects.count(),
+        'available_products_count': Product.objects.filter(is_available=True).count(),
     }
     return render(request, 'main/home.html', context)
+
 
 def product_detail(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
