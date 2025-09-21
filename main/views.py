@@ -82,7 +82,7 @@ def search_results(request):
             Q(name__icontains=query) |
             Q(description__icontains=query) |
             Q(category__name__icontains=query)
-        ).distinct() # distinct() для избежания дубликатов при поиске по нескольким полям
+        ).distinct() # distinct() для избежания дубликатов при поиске по нескольким поля #
 
     return render(request, 'main/search_results.html', {'products': products, 'query': query})
 
