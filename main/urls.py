@@ -1,5 +1,3 @@
-# main/urls.py
-
 from django.urls import path
 from . import views
 
@@ -11,4 +9,5 @@ urlpatterns = [
     path('product/add/', views.product_add, name='product_add'),
     path('search/', views.search_results, name='search_results'),
     path('add_to_favorites/<int:product_id>/', views.add_to_favorites, name='add_to_favorites'),
+
 ]

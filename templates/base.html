@@ -4,93 +4,314 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Кофейня{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        body {
+            background-color: #1a1a1a; /* Темно-серый фон вместо черного */
+            color: #ffffff; /* Белый текст */
+            font-family: Arial, sans-serif;
+        }
+
+        /* КАРТОЧКИ ТОВАРОВ */
         .widget-card {
             margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,.1);
             transition: transform 0.2s;
+            background-color: #2d2d2d; /* Более светлый серый фон карточек */
+            border: 1px solid #1e90ff; /* Синяя обводка */
+            border-radius: 8px;
         }
         .widget-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(30, 144, 255, 0.3);
         }
+
+        /* ЭЛЕМЕНТЫ ТОВАРОВ - УВЕЛИЧИВАЕМ КОНТРАСТНОСТЬ */
         .product-item img {
             width: 70px;
             height: 70px;
             object-fit: cover;
             border-radius: 5px;
             margin-right: 15px;
+            border: 1px solid #1e90ff;
         }
         .product-item {
             display: flex;
             align-items: center;
             margin-bottom: 10px;
             padding: 10px;
-            border: 1px solid #eee;
+            border: 1px solid #444; /* Более светлая граница */
             border-radius: 5px;
+            background-color: #2d2d2d;
         }
         .product-item a {
             text-decoration: none;
-            color: #333;
+            color: #ffffff; /* Белый текст */
             font-weight: bold;
+        }
+        .product-item a:hover {
+            color: #1e90ff;
         }
         .product-item p {
             margin-bottom: 0;
             font-size: 0.9em;
-            color: #666;
+            color: #e0e0e0; /* СВЕТЛО-СЕРЫЙ вместо темно-серого */
         }
         .product-item .details {
             flex-grow: 1;
         }
         .product-item .price {
             font-weight: bold;
-            color: #007bff;
+            color: #1e90ff;
         }
+
+        /* ИЗОБРАЖЕНИЯ ТОВАРОВ */
         .product-detail-img {
             max-width: 100%;
             height: auto;
             border-radius: 8px;
             margin-bottom: 20px;
+            border: 2px solid #1e90ff;
+        }
+
+        /* НАВИГАЦИОННАЯ ПАНЕЛЬ */
+        .navbar {
+            background-color: #000000 !important;
+            border-bottom: 2px solid #1e90ff;
+            padding: 10px 0;
         }
         .navbar-brand {
             font-weight: bold;
             font-size: 1.5rem;
-            color: #6f4e37 !important; /* Цвет кофе */
+            color: #1e90ff !important;
         }
-        .nav-link {
+        .nav-link, .navbar-item {
             font-size: 1.1rem;
+            color: #ffffff !important; /* БЕЛЫЙ текст */
+            margin: 0 15px;
+            text-decoration: none;
         }
-        .footer {
-            background-color: #f8f9fa;
-            padding: 20px 0;
-            text-align: center;
-            margin-top: 50px;
+        .nav-link:hover, .navbar-item:hover {
+            color: #1e90ff !important;
+        }
+
+        /* КНОПКИ */
+        .btn-outline-success {
+            color: #1e90ff;
+            border-color: #1e90ff;
+        }
+        .btn-outline-success:hover {
+            background-color: #1e90ff;
+            color: #000000;
         }
         .btn-sm-custom {
             padding: .25rem .5rem;
             font-size: .875rem;
             line-height: 1.5;
             border-radius: .2rem;
+            background-color: #1e90ff;
+            color: #ffffff;
+            border: 1px solid #1e90ff;
         }
+        .btn-sm-custom:hover {
+            background-color: #0066cc;
+            border-color: #0066cc;
+        }
+
+        /* ФОРМЫ */
+        .form-control {
+            background-color: #2d2d2d;
+            color: #ffffff; /* БЕЛЫЙ текст в формах */
+            border: 1px solid #444;
+        }
+        .form-control::placeholder {
+            color: #cccccc; /* Светло-серый placeholder */
+        }
+        .form-control:focus {
+            border-color: #1e90ff;
+            box-shadow: 0 0 0 0.2rem rgba(30, 144, 255, 0.25);
+        }
+
+        /* УВЕДОМЛЕНИЯ */
+        .alert {
+            background-color: #2d2d2d;
+            color: #ffffff; /* БЕЛЫЙ текст в уведомлениях */
+            border: 1px solid #1e90ff;
+        }
+        .alert-success {
+            border-color: #28a745;
+        }
+        .alert-error, .alert-danger {
+            border-color: #dc3545;
+        }
+
+        /* ПОДВАЛ */
+        .footer {
+            background-color: #000000;
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 50px;
+            border-top: 2px solid #1e90ff;
+            color: #ffffff;
+        }
+
+        /* ЛОГОТИП И БРЕНДИРОВАНИЕ */
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .logo-image {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+            border: 2px solid #1e90ff;
+            border-radius: 5px;
+            object-fit: contain;
+        }
+        .logo-text {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #1e90ff !important;
+        }
+        .logo-subtitle {
+            font-size: 0.9rem;
+            color: #e0e0e0; /* СВЕТЛО-СЕРЫЙ вместо темного */
+        }
+
+        /* ОСОБЫЕ ЭЛЕМЕНТЫ */
+        .download-app {
+            background-color: #1e90ff !important;
+            color: #ffffff !important;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .download-app:hover {
+            background-color: #0066cc !important;
+        }
+
+        /* КОНТЕЙНЕРЫ И РАЗДЕЛЫ */
+        .container {
+            background-color: #2d2d2d; /* Более светлый фон */
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #444; /* Более светлая граница */
+            margin-bottom: 20px;
+        }
+
+        /* ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ДЛЯ ЛУЧШЕЙ ЧИТАЕМОСТИ */
+        h1, h2, h3, h4, h5, h6 {
+            color: #ffffff !important; /* Белые заголовки */
+        }
+
+        p, li, span {
+            color: #e0e0e0; /* Светло-серый для обычного текста */
+        }
+
+        a {
+            color: #4da6ff; /* Более яркий синий для ссылок */
+        }
+
+        a:hover {
+            color: #1e90ff;
+        }
+
+        /* АДАПТИВНОСТЬ */
+        @media (max-width: 768px) {
+            .navbar-nav {
+                text-align: center;
+            }
+            .d-flex {
+                margin-top: 10px;
+            }
+            .logo-wrapper {
+                justify-content: center;
+                margin-bottom: 10px;
+            }
+        }
+        .card {
+        background-color: #2d2d2d !important;
+        border: 1px solid #444 !important;
+    }
+
+    .card-header {
+        background-color: #1e1e1e !important;
+        border-bottom: 1px solid #1e90ff !important;
+        color: #ffffff !important;
+    }
+
+    .card-title, .card-header h5, .card-header h4, .card-header h3 {
+        color: #ffffff !important;
+    }
+
+    .card-body, .card-text {
+        color: #e0e0e0 !important;
+    }
+
+    /* Исправляем все заголовки */
+    h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+        color: #ffffff !important;
+    }
+
+    /* Исправляем серый текст Bootstrap */
+    .text-muted {
+        color: #a0a0a0 !important; /* Более светлый серый */
+    }
+
+    .text-secondary {
+        color: #b0b0b0 !important;
+    }
+
+    /* Исправляем другие возможные классы */
+    .mb-0, .mt-0, .ml-0, .mr-0 {
+        color: inherit !important; /* Наследует цвет родителя */
+    }
+
+    /* Убедимся, что весь текст виден */
+    body, .container, .row, .col {
+        color: #e0e0e0 !important;
+    }
+
+
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">Моя Кофейня</a>
+    <!-- ЕДИНАЯ ШАПКА С ЛОГОТИПОМ -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <!-- Логотип и название -->
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <div class="logo-wrapper">
+                    <img src="/media/products/Дринкит значок.png" alt="Логотип кофейни" class="logo-image">
+                    <div class="logo-text">дринкит</div>
+                </div>
+            </a>
+
+            <!-- Кнопка для мобильных устройств -->
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
+            <!-- Навигационное меню -->
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">Главная</a>
+                        <a class="nav-link" href="{% url 'home' %}">О концепции</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#variety">Меню</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'product_add' %}">Добавить товар</a>
                     </li>
-                    </ul>
-                <form class="d-flex" action="{% url 'search_results' %}" method="get">
+                </ul>
+
+                <!-- Поисковая форма -->
+                <form class="d-flex me-2" action="{% url 'search_results' %}" method="get">
                     <input class="form-control me-2" type="search" placeholder="Поиск товаров" aria-label="Search" name="q" value="{{ request.GET.q }}">
                     <button class="btn btn-outline-success" type="submit">Поиск</button>
                 </form>
@@ -111,10 +332,8 @@
         {% endblock %}
     </div>
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 Моя Кофейня. Все права защищены.</p>
-        </div>
+    <footer class="footer" id="footer">
+        <div id="footer" data-w-id="4cab9ea6-98ca-59f7-683b-05cdce574314" class="footer-copy"><div class="footer-wrapper"><div class="countries-list"><div class="w-layout-vflex flex-block"><div class="countries-eyes"><img src="https://cdn.prod.website-files.com/65d79202b393b8bd1cf1e4db/664d0eb76e5c1f93b3cd8a10_eyes.svg" loading="lazy" alt=""><h3 class="footer--countries-world">Россия</h3></div><h2 class="footer--countries">Москва<br>Самара<br>Санкт-Петербург<br>Ростов-на-Дону</h2></div><div class="footer--countries-about"><img src="https://cdn.prod.website-files.com/65d79202b393b8bd1cf1e4db/664d0e74162711ee73a0b7bd_world.svg" loading="lazy" alt="" class="image-4"><div class="body-white">Наша большая мечта — чтобы где бы ты ни находился, привычное качество и вкус Дринкит были всегда рядом!<br><br>Мы постоянно растём и&nbsp;расширяемся: взгляни на&nbsp;карту&nbsp;— возможно, Дринкит уже есть рядом с&nbsp;тобой.</div></div></div><div class="countries-map"><div class="map w-widget w-widget-map" data-widget-style="roadmap" data-widget-latlng="25.0863505,55.1473478" aria-label="Drinkit" data-enable-scroll="true" role="region" title="Drinkit" data-enable-touch="true" data-widget-zoom="9" data-widget-tooltip=""><div style="height: 100%; width: 100%;"><div style="overflow: hidden;"></div></div></div></div></div><div class="w-layout-vflex footer--special"></div></div><div class="footer--links"><div class="footer--links-list"><a href="https://www.drinkitcoffee.world/ru/franchise" class="footer--links-item">Узнать о франшизе</a><a href="https://job.drinkit.ru/?from=drinkitcoffee-footer" class="footer--links-item">Стать бариста</a><a href="https://docs.google.com/spreadsheets/d/11I5h2UlYGp_KDUoJ6s5SzRqBcvOWZ6lI5X8xwet5Cjo/edit?gid=0#gid=0" class="footer--links-item-copy-copy">Реквизиты кофеен</a></div><div class="footer--social"><div class="social-icons"><a href="https://t.me/drinkit_business" target="_blank" class="social-telegram w-inline-block"><img src="https://cdn.prod.website-files.com/65d79202b393b8bd1cf1e4db/664d13840b87f42a66456d5e_telegram.svg" loading="lazy" alt=""></a><a href="https://www.instagram.com/drinkitcafe/" target="_blank" class="social-instagram w-inline-block"><img src="https://cdn.prod.website-files.com/65d79202b393b8bd1cf1e4db/664d1380724bbdd3e50f02be_instagram.svg" loading="lazy" alt=""></a></div><div class="w-layout-vflex copyright"><img src="https://cdn.prod.website-files.com/65d79202b393b8bd1cf1e4db/664d1edf036f32d2234b5d07_recycle.svg" loading="lazy" alt="" class="recycle"><div class="caption-white-center">© 2025 LLC "Dodo Franchising"</div></div></div><div class="footer--additional"><a href="mailto:feedback@drinkit.ru" target="_blank" class="link-block w-inline-block"><div class="footer__contact-us">Предложения и обратная связь feedback@drinkit.ru</div></a><div class="w-layout-vflex footer__credits"><div class="w-layout-vflex additional-links"><a href="https://docs.google.com/document/d/1oqyJkbNHbude_4Ff6VkGLXwc1k0cPzeZhh2-v5rAt04/edit?tab=t.0" target="_blank" class="privacy-policy">Пользовательское соглашение</a><a href="https://docs.google.com/document/d/1PgmB5x8QjyJLCAem9Kp0s3zmmG8SQPYCoH4ZuoSFogM/edit?tab=t.0" target="_blank" class="terms-of-conditions">Персональные данные</a></div><a href="https://tententen.xyz" target="_blank" class="tententen-wrapper w-inline-block"><img src="https://cdn.prod.website-files.com/65d79202b393b8bd1cf1e4db/664d1dde84fb41586519d173_logo-tententen.svg" loading="lazy" alt="" class="logo-tententen"></a></div></div></div></div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

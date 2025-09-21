@@ -6,151 +6,356 @@
 {% block content %}
 <h1 class="mb-4">Добро пожаловать в нашу кофейню!</h1>
 
+<!-- ВСЁ МЕНЮ ВО ВСЮ ШИРИНУ -->
 <div class="row">
-    <div class="col-md-6 col-lg-4">
+    <div class="col-12">  <!-- ИЗМЕНИЛ: col-12 вместо col-md-6 col-lg-4 -->
         <div class="card widget-card">
             <div class="card-header">
-                <h5 class="card-title mb-0">Популярные товары (Топ-5)</h5>
+                <h5 class="card-title mb-0">🍽️ Полное меню</h5>
             </div>
             <div class="card-body">
-                {% if popular_products %}
-                    <ol>
-                        {% for product in popular_products %}
-                        <li class="product-item">
-                            {% if product.image %}
-                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
-                            {% endif %}
-                            <div class="details">
-                                <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
-                                {% if product.name_en %}<p>{{ product.name_en }}</p>{% endif %}
-                                <p>Дата добавления: {{ product.created_at|date:"d.m.Y" }}</p>
-                                <p class="price">Цена: {{ product.price }} €</p>
-                                <form action="{% url 'add_to_favorites' product.id %}" method="post" style="display:inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-outline-warning btn-sm-custom">
-                                        Добавить в избранное
-                                    </button>
-                                </form>
-                            </div>
-                        </li>
-                        {% endfor %}
-                    </ol>
-                {% else %}
-                    <p>Популярных товаров пока нет.</p>
-                {% endif %}
-                <a href="#" class="card-link mt-3 d-block">Все популярные товары (пока не реализовано)</a>
-            </div>
-        </div>
-    </div>
+                {% if categories %}
+                    <div class="menu-scrollable" style="max-height: 600px; overflow-y: auto;">  <!-- УВЕЛИЧИЛ высоту -->
+                    {% for category in categories %}
+                        <div class="category-section mb-4">  <!-- УВЕЛИЧИЛ отступ -->
+                            <h6 class="category-title" style="color: #1e90ff; border-bottom: 1px solid #1e90ff; padding-bottom: 5px;">
+                                {{ category.name }}
+                                <small class="badge bg-primary">{{ category.products.count }}</small>
+                            </h6>
 
-    <div class="col-md-6 col-lg-4">
-        <div class="card widget-card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Наши новинки (Топ-5)</h5>
-            </div>
-            <div class="card-body">
-                {% if new_products %}
-                    <ol>
-                        {% for product in new_products %}
-                        <li class="product-item">
-                            {% if product.image %}
-                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
-                            {% endif %}
-                            <div class="details">
-                                <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
-                                {% if product.name_en %}<p>{{ product.name_en }}</p>{% endif %}
-                                <p>Дата добавления: {{ product.created_at|date:"d.m.Y" }}</p>
-                                <p class="price">Цена: {{ product.price }} €</p>
-                                <form action="{% url 'add_to_favorites' product.id %}" method="post" style="display:inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-outline-warning btn-sm-custom">
-                                        Добавить в избранное
-                                    </button>
-                                </form>
-                            </div>
-                        </li>
-                        {% endfor %}
-                    </ol>
-                {% else %}
-                    <p>Новых поступлений пока нет.</p>
-                {% endif %}
-                <a href="#" class="card-link mt-3 d-block">Посмотреть все новинки (пока не реализовано)</a>
-            </div>
-        </div>
-    </div>
+                            {% with category_products=category.products.all %}
+                                {% if category_products %}
+                                    <div class="row">  <!-- ДОБАВИЛ: сетку для товаров -->
+                                    {% for product in category_products %}
+                                        <div class="col-md-6 col-lg-4 mb-3">  <!-- ДОБАВИЛ: колонки -->
+                                            <div class="product-item-small p-3" style="border-radius: 8px; background-color: #2a2a2a; cursor: pointer; height: 100%;"
+                                                 onclick="window.location.href='{% url 'product_detail' product.id %}'">
+                                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                                    <div class="flex-grow-1">
+                                                        <strong class="d-block">{{ product.name }}</strong>
+                                                        {% if product.description %}
+                                                            <small class="text-muted d-block">{{ product.description|truncatewords:10 }}</small>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div class="text-end ms-2">
+                                                        <span class="price fw-bold">{{ product.price }} €</span>
+                                                        {% if product.is_available %}
+                                                            <span class="badge bg-success d-block mt-1">✓</span>
+                                                        {% else %}
+                                                            <span class="badge bg-danger d-block mt-1">✗</span>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                {% if product.image %}
+                                                    <div class="text-center mt-2">
+                                                        <img src="{{ product.image.url }}" alt="{{ product.name }}"
+                                                             class="img-fluid rounded" style="max-height: 80px; width: auto;">
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted">Нет товаров в этой категории</p>
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                        {% if not forloop.last %}<hr style="border-color: #444; margin: 25px 0;">{% endif %}
+                    {% endfor %}
+                    </div>
 
-    <div class="col-md-6 col-lg-4">
-        <div class="card widget-card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">Специальные предложения (Топ-5)</h5>
-            </div>
-            <div class="card-body">
-                {% if discount_products %}
-                    <ol>
-                        {% for product in discount_products %}
-                        <li class="product-item">
-                            {% if product.image %}
-                                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid">
-                            {% endif %}
-                            <div class="details">
-                                <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
-                                {% if product.name_en %}<p>{{ product.name_en }}</p>{% endif %}
-                                <p>Дата добавления: {{ product.created_at|date:"d.m.Y" }}</p>
-                                <p class="price">Цена: {{ product.price }} €</p>
-                                <form action="{% url 'add_to_favorites' product.id %}" method="post" style="display:inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-outline-warning btn-sm-custom">
-                                        Добавить в избранное
-                                    </button>
-                                </form>
+                    <!-- Статистика меню -->
+                    <div class="menu-stats mt-4 p-3" style="background-color: #2a2a2a; border-radius: 8px;">
+                        <div class="row text-center">
+                            <div class="col-md-3 col-6">
+                                <h4 class="mb-0" style="color: #1e90ff;">{{ categories_count }}</h4>
+                                <small>Категорий</small>
                             </div>
-                        </li>
-                        {% endfor %}
-                    </ol>
+                            <div class="col-md-3 col-6">
+                                <h4 class="mb-0" style="color: #1e90ff;">{{ all_products_count }}</h4>
+                                <small>Всего позиций</small>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <h4 class="mb-0" style="color: #1e90ff;">{{ available_products_count }}</h4>
+                                <small>Доступно</small>
+                            </div>
+                            <div class="col-md-3 col-6">
+                                <h4 class="mb-0" style="color: #1e90ff;">{{ categories.count }}</h4>
+                                <small>Всего категорий</small>
+                            </div>
+                        </div>
+                    </div>
+
                 {% else %}
-                    <p>Акций и предложений пока нет.</p>
+                    <p class="text-center">Меню пока пустое.</p>
                 {% endif %}
-                <a href="#" class="card-link mt-3 d-block">Все акции и скидки (пока не реализовано)</a>
             </div>
         </div>
     </div>
 </div>
 
+<!-- ОСТАЛЬНЫЕ ВИДЖЕТЫ ПОД МЕНЮ -->
 <div class="row mt-4">
-    <div class="col-12">
+    <!-- Популярные товары -->
+    <div class="col-md-4">
+        <div class="card widget-card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0">⭐ Популярные товары</h5>
+            </div>
+            <div class="card-body">
+                {% if popular_products %}
+                    {% for product in popular_products|slice:":5" %}
+                    <div class="product-item-small mb-2 p-2" style="border-radius: 5px; background-color: #2a2a2a; cursor: pointer;"
+                         onclick="window.location.href='{% url 'product_detail' product.id %}'">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="flex-grow-1">
+                                <strong class="d-block">{{ product.name }}</strong>
+                                <span class="price">{{ product.price }} €</span>
+                            </div>
+                            {% if product.is_available %}
+                                <span class="badge bg-success">✓</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Популярных товаров пока нет.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Новинки -->
+    <div class="col-md-4">
+        <div class="card widget-card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0">🆕 Новинки</h5>
+            </div>
+            <div class="card-body">
+                {% if new_products %}
+                    {% for product in new_products|slice:":5" %}
+                    <div class="product-item-small mb-2 p-2" style="border-radius: 5px; background-color: #2a2a2a; cursor: pointer;"
+                         onclick="window.location.href='{% url 'product_detail' product.id %}'">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="flex-grow-1">
+                                <strong class="d-block">{{ product.name }}</strong>
+                                <span class="price">{{ product.price }} €</span>
+                            </div>
+                            {% if product.is_available %}
+                                <span class="badge bg-success">✓</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>Новых поступлений пока нет.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div id="how-it-works" class="content mb-5">
+    <div class="card widget-card">
+        <div class="card-body">
+            <h2 class="h2-blue-left text-center mb-4" style="color: #1e90ff; font-size: 2rem;">
+                Делаем ежедневные моменты удобнее и уютнее<br>
+                вдохновляем на новый кофейный опыт
+            </h2>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <h4 class="how-it-works-header mb-4" style="color: #1e90ff; border-bottom: 2px solid #1e90ff; padding-bottom: 10px;">
+                        Как работает концепция
+                    </h4>
+
+                    <div class="tech-items">
+                        <!-- Пункт 1 -->
+                        <div class="tech-item mb-3 p-3" style="background-color: #2a2a2a; border-radius: 8px; border-left: 4px solid #1e90ff;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0" style="color: #ffffff;"><strong>Заказывай по пути</strong></h5>
+                                <img src="https://cdn.prod.website-files.com/65d79202b393b8bd1cf1e4db/6659cfce844fe2426bfaf97c_arrow.svg"
+                                     loading="lazy" alt="" style="width: 20px; height: 20px; filter: invert(1);">
+                            </div>
+                            <div class="how-it-works-text mt-2" style="color: #e0e0e0;">
+                                Приложение подарит совершенно новый бесшовный опыт привычного заказа кофе!
+                                Ты можешь сделать заказ по пути в офис, на учёбу, в гости или на прогулку в пару кликов
+                            </div>
+                        </div>
+
+                        <!-- Пункт 2 -->
+                        <div class="tech-item mb-3 p-3" style="background-color: #2a2a2a; border-radius: 8px; border-left: 4px solid #1e90ff;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0" style="color: #ffffff;">Настраивай как ты любишь</h5>
+                                <img src="https://cdn.prod.website-files.com/65d79202b393b8bd1cf1e4db/6659cfce844fe2426bfaf97c_arrow.svg"
+                                     loading="lazy" alt="" style="width: 20px; height: 20px; filter: invert(1);">
+                            </div>
+                            <div class="how-it-works-text mt-2" style="color: #e0e0e0;">
+                                Через приложение ты можешь поменять молоко на растительное, выбрать сироп или посыпку на свой вкус,
+                                а если добавить нашу фирменную сливочную пенку, то любой напиток сразу станет десертным
+                            </div>
+                        </div>
+
+                        <!-- Пункт 3 -->
+                        <div class="tech-item mb-3 p-3" style="background-color: #2a2a2a; border-radius: 8px; border-left: 4px solid #1e90ff;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0" style="color: #ffffff;">Следи за статусом заказа</h5>
+                                <img src="https://cdn.prod.website-files.com/65d79202b393b8bd1cf1e4db/6659cfce844fe2426bfaf97c_arrow.svg"
+                                     loading="lazy" alt="" style="width: 20px; height: 20px; filter: invert(1);">
+                            </div>
+                            <div class="how-it-works-text mt-2" style="color: #e0e0e0;">
+                                Занимайся своими делами, а мы предупредим, когда твой заказ будет готов
+                            </div>
+                        </div>
+
+                        <!-- Пункт 4 -->
+                        <div class="tech-item mb-3 p-3" style="background-color: #2a2a2a; border-radius: 8px; border-left: 4px solid #1e90ff;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0" style="color: #ffffff;">Забирай заказ со специального бара-выдачи</h5>
+                                <img src="https://cdn.prod.website-files.com/65d79202b393b8bd1cf1e4db/6659cfce844fe2426bfaf97c_arrow.svg"
+                                     loading="lazy" alt="" style="width: 20px; height: 20px; filter: invert(1);">
+                            </div>
+                            <div class="how-it-works-text mt-2" style="color: #e0e0e0;">
+                                Готовый заказ будет ждать тебя через пару минут на специальной ячейке с твоим именем и номером заказа
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Лучшие покупатели и статистика -->
+<div class="row mt-4">
+    <div class="col-md-6">
         <div class="card widget-card">
             <div class="card-header">
-                <h5 class="card-title mb-0">Наши самые активные покупатели (Топ-3)</h5>
+                <h5 class="card-title mb-0">👑 Топ покупатели</h5>
             </div>
             <div class="card-body">
                 {% if top_customers %}
-                    <ol>
-                        {% for customer in top_customers %}
-                            <li>
-                                {{ customer.first_name }} {{ customer.last_name }} (Заказов: {{ customer.order_count }})
-                            </li>
-                        {% endfor %}
-                    </ol>
+                    {% for customer in top_customers %}
+                    <div class="customer-item mb-2 p-2" style="border-radius: 5px; background-color: #2a2a2a;">
+                        <strong>{{ customer.first_name }} {{ customer.last_name }}</strong>
+                        <br>
+                        <small class="text-muted">{{ customer.order_count }} заказов</small>
+                    </div>
+                    {% endfor %}
                 {% else %}
                     <p>Покупателей пока нет.</p>
                 {% endif %}
             </div>
         </div>
     </div>
-</div>
 
-<div class="row mt-4">
-    <div class="col-12">
+    <div class="col-md-6">
         <div class="card widget-card">
             <div class="card-header">
-                <h5 class="card-title mb-0">Статистика по товарам</h5>
+                <h5 class="card-title mb-0">📊 Общая статистика</h5>
             </div>
             <div class="card-body">
-                <p>Всего товаров в наличии: {{ all_products_count }}</p>
-                <p>Доступных товаров: {{ available_products_count }}</p>
+                <div class="row text-center">
+                    <div class="col-6 mb-3">
+                        <div class="stats-item">
+                            <h4 style="color: #1e90ff;">{{ all_products_count }}</h4>
+                            <p>Всего товаров</p>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="stats-item">
+                            <h4 style="color: #1e90ff;">{{ available_products_count }}</h4>
+                            <p>Доступно</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .menu-scrollable {
+        scrollbar-width: thin;
+        scrollbar-color: #1e90ff #2a2a2a;
+    }
+
+    .menu-scrollable::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .menu-scrollable::-webkit-scrollbar-track {
+        background: #2a2a2a;
+        border-radius: 4px;
+    }
+
+    .menu-scrollable::-webkit-scrollbar-thumb {
+        background: #1e90ff;
+        border-radius: 4px;
+    }
+
+    .category-title {
+        font-weight: bold;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.2rem;
+    }
+
+    .product-item-small {
+        transition: all 0.3s ease;
+        background-color: #2a2a2a;
+        border: 1px solid #333;
+    }
+
+    .product-item-small:hover {
+        background-color: #333 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(30, 144, 255, 0.4);
+        border-color: #1e90ff;
+    }
+
+    .price {
+        color: #1e90ff;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .stats-item {
+        padding: 15px;
+    }
+
+    .stats-item h4 {
+        font-size: 2rem;
+        margin-bottom: 5px;
+    }
+
+    .badge {
+        font-size: 0.7em;
+    }
+
+    /* Улучшенная кликабельность */
+    [onclick] {
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    @media (max-width: 768px) {
+        .menu-scrollable {
+            max-height: 500px !important;
+        }
+
+        .product-item-small {
+            margin-bottom: 15px !important;
+        }
+
+        .category-title {
+            font-size: 1.1rem;
+        }
+    }
+</style>
 
 {% endblock %}

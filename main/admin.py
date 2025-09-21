@@ -1,14 +1,11 @@
-# main/admin.py
-
 from django.contrib import admin
 from .models import Category, Product, Ingredient, ProductIngredient, Customer, Order, OrderItem, FavoriteProduct
 from django.utils.html import format_html # Для использования собственного метода в list_display
 
-# Inlines для связанных моделей
 class ProductIngredientInline(admin.TabularInline):
     model = ProductIngredient
-    extra = 1 # Количество пустых форм для добавления
-    raw_id_fields = ('ingredient',) # Удобный виджет для выбора связанных объектов
+    extra = 1
+    # raw_id_fields = ('ingredient',)
 
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
